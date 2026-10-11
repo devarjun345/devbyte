@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
-import { StaggerContainer, StaggerItemArticle, MicroPress } from '../components/ui'
+import { StaggerContainer, StaggerItemArticle, StaggerItem, MicroPress } from '../components/ui'
 import { demoHackathons, type DemoHackathon, type EventMode, type HackathonStatus } from './phase4-demo-data'
 
 const categories = [...new Set(demoHackathons.map((event) => event.category))]
@@ -57,31 +57,41 @@ function HackathonDetails({ event }: { event: DemoHackathon }) {
         </Button>
         {participationInfo && <div className="feature-participation-info"><StatusNotice title="Informational preview only">There is no registration process or verified event availability connected to this listing.</StatusNotice></div>}
       </Card>
-      <div className="feature-detail-grid">
-        <Card>
-          <SectionTitle eyebrow="IMPORTANT DATES · SAMPLE" title="Timeline" />
-          <ol className="feature-timeline">
-            {event.timeline.map((entry) => (
-              <li key={entry.label}><span aria-hidden="true" /><div><strong>{entry.label}</strong><p>{entry.date}</p></div></li>
-            ))}
-          </ol>
-        </Card>
-        <Card>
-          <SectionTitle eyebrow="THE BRIEF" title="Themes & tracks" />
-          <div className="feature-tag-row">{event.themes.map((theme) => <FeatureTag key={theme}>{theme}</FeatureTag>)}</div>
-          <h3 className="feature-subheading">Eligibility</h3>
-          <ul className="feature-bullet-list">{event.eligibility.map((item) => <li key={item}>{item}</li>)}</ul>
-        </Card>
-        <Card>
-          <SectionTitle eyebrow="ILLUSTRATIVE ONLY" title="Prizes" />
-          <ul className="feature-bullet-list">{event.prizes.map((item) => <li key={item}>{item}</li>)}</ul>
-          <p className="feature-small-note">No real award, event, or organizer information is represented here.</p>
-        </Card>
-        <Card>
-          <SectionTitle eyebrow="SAMPLE BRIEF" title="Requirements" />
-          <ul className="feature-bullet-list">{event.requirements.map((item) => <li key={item}>{item}</li>)}</ul>
-        </Card>
-      </div>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="feature-detail-grid">
+          <StaggerItem staggerIndex={0} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="IMPORTANT DATES · SAMPLE" title="Timeline" />
+              <ol className="feature-timeline">
+                {event.timeline.map((entry) => (
+                  <li key={entry.label}><span aria-hidden="true" /><div><strong>{entry.label}</strong><p>{entry.date}</p></div></li>
+                ))}
+              </ol>
+            </Card>
+          </StaggerItem>
+          <StaggerItem staggerIndex={1} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="THE BRIEF" title="Themes & tracks" />
+              <div className="feature-tag-row">{event.themes.map((theme) => <FeatureTag key={theme}>{theme}</FeatureTag>)}</div>
+              <h3 className="feature-subheading">Eligibility</h3>
+              <ul className="feature-bullet-list">{event.eligibility.map((item) => <li key={item}>{item}</li>)}</ul>
+            </Card>
+          </StaggerItem>
+          <StaggerItem staggerIndex={2} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="ILLUSTRATIVE ONLY" title="Prizes" />
+              <ul className="feature-bullet-list">{event.prizes.map((item) => <li key={item}>{item}</li>)}</ul>
+              <p className="feature-small-note">No real award, event, or organizer information is represented here.</p>
+            </Card>
+          </StaggerItem>
+          <StaggerItem staggerIndex={3} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="SAMPLE BRIEF" title="Requirements" />
+              <ul className="feature-bullet-list">{event.requirements.map((item) => <li key={item}>{item}</li>)}</ul>
+            </Card>
+          </StaggerItem>
+        </div>
+      </StaggerContainer>
       <section className="feature-related">
         <SectionTitle eyebrow="MORE PREVIEW BRIEFS" title="Related hackathons" />
         <div className="feature-mini-list">

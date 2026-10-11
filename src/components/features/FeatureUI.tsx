@@ -114,3 +114,5 @@ export function StatusNotice({
     </div>
   )
 }
+
+export { CodeWorkspace } from './CodeWorkspace'

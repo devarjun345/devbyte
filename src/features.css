@@ -262,6 +262,9 @@
   min-width: 0;
   flex-direction: column;
   padding: 19px !important;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: white;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
@@ -1390,13 +1393,20 @@
   .feature-secondary-link,
   .feature-choice,
   .feature-select-label select,
-  .feature-select-label textarea {
+  .feature-select-label textarea,
+  .feature-mini-list a,
+  .feature-direction-filter button {
     transition: none;
   }
 
   .feature-listing-card:hover,
   .feature-button-link:hover,
-  .feature-secondary-link:hover {
+  .feature-secondary-link:hover,
+  .feature-mini-list a:hover {
     transform: none;
+  }
+
+  .feature-step-indicator > div > span {
+    transition: none;
   }
 }

@@ -15,7 +15,7 @@
   flex-direction: column;
   padding: 19px;
   border: 1px solid var(--color-border);
-  border-radius: 11px;
+  border-radius: 12px;
   background: var(--color-white);
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
@@ -124,57 +124,76 @@
   text-underline-offset: 4px;
 }
 
-.arena-workspace {
+/* ==========================================================================
+   LeetCode-style Coding Workspace
+   ========================================================================== */
+
+.code-workspace {
   display: grid;
-  min-height: 550px;
-  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-  gap: 15px;
+  grid-template-columns: minmax(360px, 0.42fr) minmax(520px, 0.58fr);
+  gap: 16px;
+  min-height: calc(100vh - 220px);
+  height: calc(100vh - 180px);
+  max-height: calc(100vh - 180px);
 }
 
-.arena-problem-panel,
-.arena-editor-panel {
-  min-width: 0;
-  padding: 19px;
-  border: 1px solid var(--color-border);
-  border-radius: 11px;
-  background: white;
-}
-
-.arena-problem-panel {
+.code-workspace-problem {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-white);
+  overflow: hidden;
 }
 
-.arena-panel-heading {
+.code-workspace-problem-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.arena-panel-heading h2 {
+.code-workspace-problem-header h2 {
   margin: 6px 0 0;
-  font-size: 19px;
+  font-size: 20px;
+  font-weight: 660;
   letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.code-workspace-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.code-workspace-topics .feature-tag {
+  font-size: 8px;
 }
 
 .arena-tabs {
   display: flex;
-  gap: 3px;
-  margin: 17px -3px 0;
-  padding: 0 3px;
+  gap: 2px;
+  margin: 0 -2px 16px;
+  padding: 0 2px;
   border-bottom: 1px solid var(--color-border);
 }
 
 .arena-tabs button {
   position: relative;
-  min-height: 38px;
-  padding: 0 10px;
+  min-height: 40px;
+  padding: 0 14px;
   border: 0;
   background: transparent;
   color: var(--color-secondary-text);
   cursor: pointer;
   font-size: 10px;
+  font-weight: 550;
+  transition: color 140ms ease;
 }
 
 .arena-tabs button::after {
@@ -194,7 +213,7 @@
 }
 
 .arena-tabs button.is-active {
-  font-weight: 660;
+  font-weight: 650;
 }
 
 .arena-tabs button.is-active::after {
@@ -206,35 +225,30 @@
   outline-offset: -2px;
 }
 
-.arena-tab-panel {
-  padding-top: 15px;
-}
-
-.arena-tab-panel > .feature-section-title {
-  margin-top: 18px;
-}
-
-.arena-tab-panel > .feature-section-title h2 {
-  font-size: 14px;
+.code-workspace-tab-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 8px;
+  min-height: 0;
 }
 
 .arena-problem-description {
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: #454b41;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.8;
 }
 
 .arena-example-list {
   display: grid;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 .arena-example {
   display: grid;
-  gap: 7px;
-  padding: 12px;
+  gap: 8px;
+  padding: 14px;
   border: 1px solid #eaede6;
   border-radius: 8px;
   background: #fafbf9;
@@ -247,10 +261,10 @@
 
 .arena-example p {
   display: grid;
-  grid-template-columns: 51px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 10px;
   margin: 0;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .arena-example p > strong,
@@ -264,7 +278,10 @@
   overflow-wrap: anywhere;
   color: #2e3529;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f0f3ea;
 }
 
 .arena-example small {
@@ -273,103 +290,124 @@
   line-height: 1.5;
 }
 
-.arena-editor-panel {
+.feature-bullet-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  list-style: disc;
+  color: #4e5449;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.feature-bullet-list li::marker {
+  color: var(--color-sage-green);
+}
+
+.code-workspace-editor {
   display: flex;
   flex-direction: column;
-  background: #111710;
-  border-color: #263024;
-  color: #f5f7f2;
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
 }
 
-.arena-editor-toolbar {
+.code-workspace-editor-header {
+  margin-bottom: 10px;
+}
+
+.code-workspace-toolbar {
   display: flex;
-  min-height: 36px;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #2a3528;
+  border-radius: 8px;
+  background: #161d13;
 }
 
-.arena-editor-toolbar label {
+.code-workspace-language-select {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   color: #abb5a5;
   font-size: 9px;
+  font-weight: 550;
 }
 
-.arena-editor-toolbar select {
-  min-height: 31px;
-  padding: 0 25px 0 9px;
+.code-workspace-language-select select {
+  min-height: 32px;
+  padding: 0 28px 0 10px;
   border: 1px solid #3a4637;
   border-radius: 6px;
   outline: 0;
   background: #1c261a;
   color: #f5f7f2;
-  font-size: 9px;
+  font-size: 10px;
+  cursor: pointer;
 }
 
-.arena-editor-toolbar select:focus-visible {
+.code-workspace-language-select select:focus-visible {
   border-color: var(--color-sage-green);
   box-shadow: 0 0 0 2px rgb(167 201 87 / 25%);
 }
 
-.arena-editor-toolbar button {
-  min-height: 31px;
-  padding-inline: 9px;
-  color: #d6e0cb;
-  font-size: 9px;
+.code-workspace-editor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 8px;
 }
 
 .arena-editor-label {
-  margin: 14px 0 7px;
+  margin: 0;
   color: #b3bcae;
   font-size: 9px;
+  font-weight: 550;
 }
 
-.arena-copy-message {
-  margin: 8px 0 0;
-  color: #c3d9a6;
-  font-size: 9px;
-}
-
-.arena-code-frame {
-  display: grid;
-  min-height: 245px;
+.code-workspace-code-frame {
   flex: 1;
-  grid-template-columns: 35px minmax(0, 1fr);
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  min-height: 0;
+  border: 1px solid #2a3528;
+  border-radius: 8px;
+  background: #111710;
   overflow: hidden;
-  border: 1px solid #303c2d;
-  border-radius: 7px;
-  background: #151d13;
 }
 
 .arena-line-numbers {
-  overflow: hidden;
-  padding: 13px 8px 13px 0;
-  border-right: 1px solid #2b3529;
-  color: #778372;
+  overflow-y: auto;
+  padding: 14px 10px 14px 0;
+  border-right: 1px solid #2a3528;
+  color: #6b7764;
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.75;
+  font-size: 11px;
+  line-height: 1.7;
   text-align: right;
   user-select: none;
   white-space: pre;
+  background: #141c13;
 }
 
 .arena-code-editor {
   width: 100%;
   min-width: 0;
-  min-height: 245px;
-  padding: 13px;
-  resize: vertical;
+  flex: 1;
+  min-height: 0;
+  padding: 14px;
+  resize: none;
   border: 0;
   outline: 0;
   background: transparent;
   color: #dce9d1;
   caret-color: var(--color-sage-green);
   font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.75;
+  font-size: 11px;
+  line-height: 1.7;
   tab-size: 2;
   white-space: pre;
 }
@@ -378,8 +416,110 @@
   box-shadow: inset 0 0 0 2px rgb(167 201 87 / 50%);
 }
 
+.code-workspace-terminal-resizer {
+  position: relative;
+  height: 6px;
+  cursor: row-resize;
+  background: transparent;
+  transition: background 120ms ease;
+}
+
+.code-workspace-terminal-resizer:hover,
+.code-workspace-terminal-resizer:focus-visible {
+  background: var(--color-sage-green);
+}
+
+.code-workspace-terminal-resizer:focus-visible {
+  outline: 2px solid var(--color-sage-green);
+  outline-offset: -2px;
+}
+
+.code-workspace-resizer-handle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 32px;
+  height: 3px;
+  margin-left: -16px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: #3a4637;
+  transition: background 120ms ease;
+}
+
+.code-workspace-terminal-resizer:hover .code-workspace-resizer-handle {
+  background: var(--color-sage-green);
+}
+
+.code-workspace-terminal {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid #2a3528;
+  border-radius: 8px;
+  background: #111710;
+  overflow: hidden;
+}
+
+.code-workspace-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 0 12px;
+  border-bottom: 1px solid #2a3528;
+  color: #abb5a5;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.code-workspace-terminal-toggle {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #abb5a5;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.code-workspace-terminal-toggle:hover {
+  background: #1c261a;
+  color: var(--color-sage-green);
+}
+
+.code-workspace-terminal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  min-height: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.6;
+  color: #dce9d1;
+}
+
+.code-workspace-terminal-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #7a8678;
+}
+
+.code-workspace-terminal-hint {
+  font-size: 8px !important;
+  color: #6b7764 !important;
+}
+
 .arena-editor-note {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: #a2ad9c;
   font-size: 8px;
   line-height: 1.5;
@@ -389,12 +529,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 13px;
+  margin-top: 8px;
 }
 
 .arena-run-actions button {
-  min-height: 35px;
-  padding-inline: 11px;
+  min-height: 36px;
+  padding-inline: 12px;
   font-size: 9px;
 }
 
@@ -407,9 +547,19 @@
   background: #202c1c;
 }
 
-.arena-result-notice {
-  margin-top: 12px;
+.arena-copy-message {
+  margin: 8px 0 0;
+  color: #c3d9a6;
+  font-size: 9px;
 }
+
+.arena-result-notice {
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   Assignments
+   ========================================================================== */
 
 .assignment-summary-grid {
   display: grid;
@@ -417,10 +567,13 @@
   gap: 13px;
 }
 
-.assignment-summary-grid > .card {
+.assignment-summary-card {
   position: relative;
   min-height: 102px;
-  padding: 15px 17px !important;
+  padding: 15px 17px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .assignment-summary-grid p {
@@ -556,6 +709,10 @@
   gap: 15px;
 }
 
+.assignment-detail-card {
+  min-width: 0;
+}
+
 .assignment-detail-main,
 .assignment-detail-side {
   display: grid;
@@ -583,7 +740,7 @@
   background: #f6f7f3;
   color: #62685e;
   font-size: 9px;
-  line-height: 1.6;
+  line-height: 1.6
 }
 
 .assignment-facts {
@@ -648,14 +805,40 @@
   color: var(--color-deep-olive);
 }
 
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .code-workspace {
+    grid-template-columns: minmax(320px, 0.4fr) minmax(480px, 0.6fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .code-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: auto;
+    height: auto;
+    max-height: none;
+  }
+
+  .code-workspace-problem {
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .code-workspace-editor {
+    min-height: 60vh;
+  }
+}
+
 @media (max-width: 1000px) {
   .arena-challenge-grid,
   .assignment-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .arena-workspace {
-    grid-template-columns: 1fr;
   }
 
   .arena-editor-panel {
@@ -663,10 +846,11 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .arena-filter-grid,
   .assignment-filter-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
   .arena-filter-grid > div:has(input),
@@ -681,24 +865,78 @@
     grid-template-columns: 1fr;
   }
 
-  .arena-workspace {
-    gap: 11px;
+  .code-workspace {
+    gap: 12px;
   }
 
-  .arena-problem-panel,
-  .arena-editor-panel {
-    padding: 14px;
+  .code-workspace-problem {
+    padding: 16px;
   }
 
-  .arena-card-footer {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
+  .code-workspace-toolbar {
+    flex-wrap: wrap;
+    min-height: auto;
+    padding: 8px;
+  }
+
+  .code-workspace-language-select {
+    flex: 1 1 100%;
   }
 
   .arena-tabs button {
     flex: 1;
-    padding-inline: 5px;
+    padding-inline: 6px;
+    font-size: 9px;
+  }
+
+  .code-workspace-code-frame {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .arena-filter-grid,
+  .assignment-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .code-workspace {
+    gap: 10px;
+  }
+
+  .code-workspace-problem {
+    padding: 14px;
+    max-height: 35vh;
+  }
+
+  .code-workspace-editor-main {
+    gap: 6px;
+  }
+
+  .code-workspace-toolbar {
+    padding: 6px 8px;
+  }
+
+  .code-workspace-language-select {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .code-workspace-language-select select {
+    width: 100%;
+  }
+
+  .code-workspace-terminal {
+    min-height: 160px;
+  }
+
+  .arena-run-actions {
+    width: 100%;
+  }
+
+  .arena-run-actions button {
+    flex: 1;
+    text-align: center;
   }
 }
 
@@ -711,5 +949,13 @@
   .arena-challenge-card:hover,
   .assignment-card:hover {
     transform: none;
+  }
+
+  .assignment-progress-track > span {
+    transition: none;
+  }
+
+  .code-workspace-terminal-resizer {
+    transition: none;
   }
 }

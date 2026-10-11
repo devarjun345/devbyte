@@ -473,14 +473,14 @@
   letter-spacing: 0.12em;
 }
 
-.dashboard-welcome-eyebrow > span {
+.dashboard-welcome-dot {
   width: 3px;
   height: 3px;
   border-radius: 50%;
   background: var(--color-sage-green);
 }
 
-.dashboard-welcome h2 {
+.dashboard-welcome h1 {
   margin: 14px 0 0;
   font-size: clamp(28px, 3vw, 39px);
   font-weight: 650;
@@ -879,6 +879,16 @@
   margin-top: 18px;
 }
 
+.dashboard-progress-item {
+  border-top: 1px solid #f0f1ed;
+  padding-top: 16px;
+}
+
+.dashboard-progress-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .dashboard-progress-heading {
   display: flex;
   align-items: center;
@@ -954,11 +964,24 @@
 
 .dashboard-opportunity-list {
   display: grid;
+  gap: 10px;
 }
 
 .dashboard-opportunity-item {
-  padding: 12px 0;
-  border-top: 1px solid #eff0eb;
+  padding: 14px 16px;
+  border: 1px solid #eff0eb;
+  border-radius: 10px;
+  background: #fafbf9;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dashboard-opportunity-item:hover {
+  transform: translateY(-1px);
+  border-color: #dce3d0;
+  box-shadow: 0 6px 16px rgb(42 54 30 / 4%);
 }
 
 .dashboard-opportunity-meta,
@@ -1024,23 +1047,37 @@
 
 .dashboard-quick-actions {
   display: grid;
+  gap: 10px;
   margin-top: 12px;
 }
 
 .dashboard-quick-action {
   display: grid;
-  min-height: 60px;
-  grid-template-columns: 31px minmax(0, 1fr) 14px;
+  min-height: 72px;
+  grid-template-columns: 36px minmax(0, 1fr) 18px;
   align-items: center;
-  gap: 10px;
-  border-top: 1px solid #eff0eb;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #eff0eb;
+  border-radius: 10px;
+  background: #fafbf9;
   color: inherit;
   text-decoration: none;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dashboard-quick-action:hover {
+  transform: translateY(-1px);
+  border-color: #dce3d0;
+  box-shadow: 0 6px 16px rgb(42 54 30 / 4%);
 }
 
 .dashboard-quick-icon {
-  width: 29px;
-  height: 29px;
+  width: 34px;
+  height: 34px;
   background: #f0f3e8;
   font-size: 9px;
 }
@@ -1238,7 +1275,7 @@
     max-width: 520px;
   }
 
-  .dashboard-welcome h2 {
+  .dashboard-welcome h1 {
     max-width: 290px;
     font-size: 30px;
   }
@@ -1394,9 +1431,11 @@
   .dashboard-metric-card,
   .dashboard-primary-link,
   .dashboard-secondary-link,
+  .dashboard-quick-action,
   .dashboard-quick-arrow,
   .dashboard-search,
-  .dashboard-icon-button {
+  .dashboard-icon-button,
+  .dashboard-opportunity-item {
     transition: none;
   }
 }

@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
-import { StaggerContainer, StaggerItemArticle, MicroPress, Shake, useShakeTrigger } from '../components/ui'
+import { StaggerContainer, StaggerItemArticle, StaggerItem, MicroPress, Shake, useShakeTrigger } from '../components/ui'
 import { demoSkillSwaps, type DemoSkillSwap } from './phase4-demo-data'
 
 const skillCategories = [...new Set(demoSkillSwaps.map((swap) => swap.category))]
@@ -38,7 +38,21 @@ function SkillSwapDetails({ swap }: { swap: DemoSkillSwap }) {
         <p className="feature-caution">This profile and exchange listing are demo content. A request preview will not message this person or confirm an exchange.</p>
         <Link className="feature-button-link" to={`/discover/skill-swap/${swap.id}/request`}>Draft an exchange request <span aria-hidden="true">↗</span></Link>
       </Card>
-      <Card className="feature-swap-detail-note"><SectionTitle eyebrow="A PEER-LEARNING IDEA" title="Possible session outline" /><ol className="feature-outline-list"><li>Agree on one small learning goal for each person.</li><li>Take turns teaching through a short example or exercise.</li><li>Close by sharing notes and a next practice step.</li></ol><p className="feature-small-note">This outline is informational sample content, not a scheduled session.</p></Card>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="feature-detail-grid">
+          <StaggerItem staggerIndex={0} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card className="feature-swap-detail-note">
+              <SectionTitle eyebrow="A PEER-LEARNING IDEA" title="Possible session outline" />
+              <ol className="feature-outline-list">
+                <li>Agree on one small learning goal for each person.</li>
+                <li>Take turns teaching through a short example or exercise.</li>
+                <li>Close by sharing notes and a next practice step.</li>
+              </ol>
+              <p className="feature-small-note">This outline is informational sample content, not a scheduled session.</p>
+            </Card>
+          </StaggerItem>
+        </div>
+      </StaggerContainer>
     </FeaturePage>
   )
 }

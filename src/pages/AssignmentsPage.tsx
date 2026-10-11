@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
-import { StaggerContainer, StaggerItemArticle, MicroPress, Shake, useShakeTrigger } from '../components/ui'
+import { StaggerContainer, StaggerItemArticle, StaggerItem, MicroPressCard, Shake, useShakeTrigger } from '../components/ui'
 import { demoAssignments, type AssignmentStatus, type DemoAssignment } from './phase5-demo-data'
 
 const statusValues: AssignmentStatus[] = ['Not Started', 'In Progress', 'Submitted']
@@ -17,9 +17,9 @@ function AssignmentCard({ assignment, ...staggerProps }: { assignment: DemoAssig
       <div className="assignment-card-meta"><span>Sample due date <strong>{assignment.dueDate}</strong></span><span>Priority <strong>{assignment.priority}</strong></span></div>
       <div className="assignment-progress-heading"><span>Illustrative progress</span><strong>{assignment.progress}%</strong></div>
       <div aria-label={`${assignment.title}: ${assignment.progress}% illustrative progress`} aria-valuemax={100} aria-valuemin={0} aria-valuenow={assignment.progress} className="assignment-progress-track" role="progressbar"><span style={{ transform: `scaleX(${assignment.progress / 100})` }} /></div>
-      <MicroPress asChild>
-      <Link className="feature-card-link" to={`/practice/assignments/${assignment.id}`}>{assignment.status === 'Submitted' ? 'View assignment preview' : 'Open assignment'} <span aria-hidden="true">↗</span></Link>
-    </MicroPress>
+      <MicroPressCard asChild>
+        <Link className="feature-card-link" to={`/practice/assignments/${assignment.id}`}>{assignment.status === 'Submitted' ? 'View assignment preview' : 'Open assignment'} <span aria-hidden="true">↗</span></Link>
+      </MicroPressCard>
     </StaggerItemArticle>
   )
 }
@@ -54,40 +54,46 @@ function AssignmentDetail({ assignment }: { assignment: DemoAssignment }) {
 
   return (
     <FeaturePage actions={<FeatureBackLink to="/practice/assignments">All assignments</FeatureBackLink>} description={assignment.description} eyebrow={`${assignment.course} · ASSIGNMENT PREVIEW`} title={assignment.title}>
-      <div className="assignment-detail-grid">
-        <div className="assignment-detail-main">
-          <Card>
-            <SectionTitle eyebrow="SAMPLE INSTRUCTIONS" title="Assignment overview" />
-            <ul className="feature-bullet-list">{assignment.instructions.map((item) => <li key={item}>{item}</li>)}</ul>
-            <SectionTitle eyebrow="CHECK BEFORE YOU FINISH" title="Requirements" />
-            <ul className="feature-bullet-list">{assignment.requirements.map((item) => <li key={item}>{item}</li>)}</ul>
-          </Card>
-          <Card className="assignment-submit-card">
-            <SectionTitle eyebrow="LOCAL FORM PREVIEW" title="Prepare a response" />
-            <p className="assignment-form-note">This form only previews your draft in this browser view. It does not submit or save work to a server.</p>
-            <form className="feature-form feature-form-single" noValidate onSubmit={submit}>
-              <Shake trigger={trigger}>
-                <label className="feature-select-label">Written response
-                  <textarea aria-describedby={errors.response ? 'assignment-response-error' : undefined} aria-invalid={Boolean(errors.response)} maxLength={2000} onChange={(event) => { setResponse(event.target.value); setPreview(false) }} placeholder="Describe your approach, decisions, or reflection (at least 30 characters)." rows={6} value={response} />
-                  <span className={errors.response ? 'feature-field-error' : 'feature-field-hint'} id={errors.response ? 'assignment-response-error' : undefined}>{errors.response ?? `${response.length}/2000`}</span>
-                </label>
-                <Input autoComplete="url" error={errors.projectUrl} helperText="Optional · use an http or https link." label="Project URL" onChange={(event) => { setProjectUrl(event.target.value); setPreview(false) }} placeholder="https://example.com/project" type="url" value={projectUrl} />
-                <Button type="submit">Preview submission</Button>
-              </Shake>
-            </form>
-            {preview && <div className="assignment-submission-preview"><StatusNotice title="Submission preview only">Nothing was submitted or saved. This is not a completed assignment or server confirmation.</StatusNotice>{response.trim() && <div><strong>Draft response</strong><p>{response}</p></div>}{projectUrl.trim() && <div><strong>Project URL</strong><p><a href={projectUrl} rel="noreferrer" target="_blank">{projectUrl}</a></p></div>}</div>}
-          </Card>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="assignment-detail-grid">
+          <StaggerItem staggerIndex={0} initialY={10} duration={0.32} className="assignment-detail-card">
+            <div className="assignment-detail-main">
+              <Card>
+                <SectionTitle eyebrow="SAMPLE INSTRUCTIONS" title="Assignment overview" />
+                <ul className="feature-bullet-list">{assignment.instructions.map((item) => <li key={item}>{item}</li>)}</ul>
+                <SectionTitle eyebrow="CHECK BEFORE YOU FINISH" title="Requirements" />
+                <ul className="feature-bullet-list">{assignment.requirements.map((item) => <li key={item}>{item}</li>)}</ul>
+              </Card>
+              <Card className="assignment-submit-card">
+                <SectionTitle eyebrow="LOCAL FORM PREVIEW" title="Prepare a response" />
+                <p className="assignment-form-note">This form only previews your draft in this browser view. It does not submit or save work to a server.</p>
+                <form className="feature-form feature-form-single" noValidate onSubmit={submit}>
+                  <Shake trigger={trigger}>
+                    <label className="feature-select-label">Written response
+                      <textarea aria-describedby={errors.response ? 'assignment-response-error' : undefined} aria-invalid={Boolean(errors.response)} maxLength={2000} onChange={(event) => { setResponse(event.target.value); setPreview(false) }} placeholder="Describe your approach, decisions, or reflection (at least 30 characters)." rows={6} value={response} />
+                      <span className={errors.response ? 'feature-field-error' : 'feature-field-hint'} id={errors.response ? 'assignment-response-error' : undefined}>{errors.response ?? `${response.length}/2000`}</span>
+                    </label>
+                    <Input autoComplete="url" error={errors.projectUrl} helperText="Optional · use an http or https link." label="Project URL" onChange={(event) => { setProjectUrl(event.target.value); setPreview(false) }} placeholder="https://example.com/project" type="url" value={projectUrl} />
+                    <Button type="submit">Preview submission</Button>
+                  </Shake>
+                </form>
+                {preview && <div className="assignment-submission-preview"><StatusNotice title="Submission preview only">Nothing was submitted or saved. This is not a completed assignment or server confirmation.</StatusNotice>{response.trim() && <div><strong>Draft response</strong><p>{response}</p></div>}{projectUrl.trim() && <div><strong>Project URL</strong><p><a href={projectUrl} rel="noreferrer" target="_blank">{projectUrl}</a></p></div>}</div>}
+              </Card>
+            </div>
+          </StaggerItem>
+          <StaggerItem staggerIndex={1} initialY={10} duration={0.32} className="assignment-detail-card">
+            <aside className="assignment-detail-side">
+              <Card>
+                <SectionTitle eyebrow="SAMPLE METADATA" title="At a glance" />
+                <dl className="assignment-facts"><div><dt>Topic</dt><dd>{assignment.course}</dd></div><div><dt>Due date</dt><dd>{assignment.dueDate} · sample</dd></div><div><dt>Status</dt><dd>{assignment.status} · demo</dd></div><div><dt>Priority</dt><dd>{assignment.priority} · illustrative</dd></div></dl>
+                <div className="assignment-progress-heading"><span>Progress preview</span><strong>{assignment.progress}%</strong></div>
+                <div aria-label={`${assignment.progress}% illustrative assignment progress`} aria-valuemax={100} aria-valuemin={0} aria-valuenow={assignment.progress} className="assignment-progress-track" role="progressbar"><span style={{ transform: `scaleX(${assignment.progress / 100})` }} /></div>
+              </Card>
+              <Card className="assignment-resource-note"><p className="feature-eyebrow">RESOURCES</p><p>No external resource links are attached to this sample assignment.</p></Card>
+            </aside>
+          </StaggerItem>
         </div>
-        <aside className="assignment-detail-side">
-          <Card>
-            <SectionTitle eyebrow="SAMPLE METADATA" title="At a glance" />
-            <dl className="assignment-facts"><div><dt>Topic</dt><dd>{assignment.course}</dd></div><div><dt>Due date</dt><dd>{assignment.dueDate} · sample</dd></div><div><dt>Status</dt><dd>{assignment.status} · demo</dd></div><div><dt>Priority</dt><dd>{assignment.priority} · illustrative</dd></div></dl>
-            <div className="assignment-progress-heading"><span>Progress preview</span><strong>{assignment.progress}%</strong></div>
-            <div aria-label={`${assignment.progress}% illustrative assignment progress`} aria-valuemax={100} aria-valuemin={0} aria-valuenow={assignment.progress} className="assignment-progress-track" role="progressbar"><span style={{ transform: `scaleX(${assignment.progress / 100})` }} /></div>
-          </Card>
-          <Card className="assignment-resource-note"><p className="feature-eyebrow">RESOURCES</p><p>No external resource links are attached to this sample assignment.</p></Card>
-        </aside>
-      </div>
+      </StaggerContainer>
     </FeaturePage>
   )
 }
@@ -123,10 +129,16 @@ export function AssignmentsPage() {
 
   return (
     <FeaturePage description="A small assignment overview to explore due dates, progress, and submission-preview interactions. Every course item and status here is sample content." eyebrow="PRACTICE · LEARNING TASKS" title="Assignments">
-      <div className="assignment-summary-grid">
-        <Card><span className="assignment-summary-icon" aria-hidden="true">◷</span><p>Upcoming examples</p><strong>{upcomingCount}</strong><small>Sample tasks · not account data</small></Card>
-        <Card><span className="assignment-summary-icon" aria-hidden="true">✓</span><p>Completed examples</p><strong>{completedCount}</strong><small>Illustrative status only</small></Card>
-      </div>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="assignment-summary-grid">
+          <StaggerItemArticle staggerIndex={0} className="assignment-summary-card">
+            <span className="assignment-summary-icon" aria-hidden="true">◷</span><p>Upcoming examples</p><strong>{upcomingCount}</strong><small>Sample tasks · not account data</small>
+          </StaggerItemArticle>
+          <StaggerItemArticle staggerIndex={1} className="assignment-summary-card">
+            <span className="assignment-summary-icon" aria-hidden="true">✓</span><p>Completed examples</p><strong>{completedCount}</strong><small>Illustrative status only</small>
+          </StaggerItemArticle>
+        </div>
+      </StaggerContainer>
       <Card className="feature-filter-panel">
         <div className="feature-filter-heading"><div><strong>Find an assignment</strong><span>Filter the illustrative course tasks</span></div><Button onClick={clearFilters} variant="ghost">Clear all</Button></div>
         <div className="feature-filter-grid assignment-filter-grid">
@@ -136,7 +148,7 @@ export function AssignmentsPage() {
         </div>
       </Card>
       <div className="feature-results-heading"><SectionTitle eyebrow="SAMPLE COURSEWORK" title="Assignment previews" /><span>{filtered.length} {filtered.length === 1 ? 'assignment' : 'assignments'}</span></div>
-      {filtered.length ? <StaggerContainer className="assignment-grid">{filtered.map((item) => <AssignmentCard assignment={item} key={item.id} />)}</StaggerContainer> : <EmptyResults description="Try another search or reset your status filter." onReset={clearFilters} title="No sample assignments match" />}
+      {filtered.length ? <StaggerContainer className="assignment-grid" staggerMs={60} viewportAmount={0.15}>{filtered.map((item) => <AssignmentCard assignment={item} key={item.id} />)}</StaggerContainer> : <EmptyResults description="Try another search or reset your status filter." onReset={clearFilters} title="No sample assignments match" />}
     </FeaturePage>
   )
 }

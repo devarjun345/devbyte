@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
-import { StaggerContainer, StaggerItemArticle, MicroPress } from '../components/ui'
+import { StaggerContainer, StaggerItemArticle, StaggerItem, MicroPress } from '../components/ui'
 import { Shake, useShakeTrigger } from '../components/ui'
 import { demoTeams, type DemoTeam } from './phase4-demo-data'
 
@@ -42,33 +42,39 @@ function TeamDetails({ team }: { team: DemoTeam }) {
       eyebrow={`TEAM PREVIEW · ${team.status.toUpperCase()}`}
       title={team.name}
     >
-      <div className="feature-detail-grid team-detail-grid">
-        <Card className="feature-detail-hero">
-          <p className="feature-eyebrow">PROJECT OVERVIEW · SAMPLE</p>
-          <h2 className="feature-project-title">{team.project}</h2>
-          <p className="feature-body-copy">{team.description}</p>
-          <div className="feature-detail-facts">
-            <div><span>Collaboration</span><strong>{team.collaboration}</strong></div>
-            <div><span>Team status</span><strong>{team.status} · illustrative</strong></div>
-          </div>
-          <p className="feature-caution">The members and project shown are fictional demo content. No team space or membership is connected.</p>
-          <h3 className="feature-subheading">Skills & technologies</h3>
-          <div className="feature-tag-row">{team.skills.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div>
-          <h3 className="feature-subheading">Interests</h3>
-          <div className="feature-tag-row">{team.interests.map((interest) => <FeatureTag key={interest}>{interest}</FeatureTag>)}</div>
-        </Card>
-        <Card>
-          <SectionTitle eyebrow="FICTIONAL SAMPLE MEMBERS" title="People & roles" />
-          <ul className="feature-member-list">
-            {team.members.map((member) => <li key={member.initials}><span className="feature-avatar">{member.initials}</span><span><strong>{member.name}</strong><small>{member.role}</small></span></li>)}
-          </ul>
-        </Card>
-        <Card>
-          <SectionTitle eyebrow="COLLABORATION NEEDS" title="Open roles" />
-          <ul className="feature-bullet-list">{team.openRoles.map((role) => <li key={role}>{role}</li>)}</ul>
-          {team.status === 'Forming' && <Link className="feature-button-link feature-inline-button" to={`/build/teams/${team.id}/join`}>Preview an introduction</Link>}
-        </Card>
-      </div>
+      <Card className="feature-detail-hero">
+        <p className="feature-eyebrow">PROJECT OVERVIEW · SAMPLE</p>
+        <h2 className="feature-project-title">{team.project}</h2>
+        <p className="feature-body-copy">{team.description}</p>
+        <div className="feature-detail-facts">
+          <div><span>Collaboration</span><strong>{team.collaboration}</strong></div>
+          <div><span>Team status</span><strong>{team.status} · illustrative</strong></div>
+        </div>
+        <p className="feature-caution">The members and project shown are fictional demo content. No team space or membership is connected.</p>
+        <h3 className="feature-subheading">Skills & technologies</h3>
+        <div className="feature-tag-row">{team.skills.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div>
+        <h3 className="feature-subheading">Interests</h3>
+        <div className="feature-tag-row">{team.interests.map((interest) => <FeatureTag key={interest}>{interest}</FeatureTag>)}</div>
+      </Card>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="feature-detail-grid">
+          <StaggerItem staggerIndex={0} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="FICTIONAL SAMPLE MEMBERS" title="People & roles" />
+              <ul className="feature-member-list">
+                {team.members.map((member) => <li key={member.initials}><span className="feature-avatar">{member.initials}</span><span><strong>{member.name}</strong><small>{member.role}</small></span></li>)}
+              </ul>
+            </Card>
+          </StaggerItem>
+          <StaggerItem staggerIndex={1} initialY={10} duration={0.32} className="feature-detail-card">
+            <Card>
+              <SectionTitle eyebrow="COLLABORATION NEEDS" title="Open roles" />
+              <ul className="feature-bullet-list">{team.openRoles.map((role) => <li key={role}>{role}</li>)}</ul>
+              {team.status === 'Forming' && <Link className="feature-button-link feature-inline-button" to={`/build/teams/${team.id}/join`}>Preview an introduction</Link>}
+            </Card>
+          </StaggerItem>
+        </div>
+      </StaggerContainer>
     </FeaturePage>
   )
 }

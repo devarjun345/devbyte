@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Button, Card } from '../components/ui'
 import { FeaturePage, FeatureTag, SectionTitle } from '../components/features/FeatureUI'
+import { StaggerContainer, StaggerItemArticle, MicroPressCard } from '../components/ui'
 import { demoMatchProfiles } from './phase4-demo-data'
 
 const skillOptions = ['React', 'TypeScript', 'Python', 'Figma', 'UI design', 'Data visualization', 'Git & GitHub', 'Accessibility']
@@ -41,17 +42,24 @@ function ChoiceGroup({
 }
 
 function MatchProfileCard({ profile, index }: { index: number; profile: (typeof demoMatchProfiles)[number] }) {
-  const reduceMotion = useReducedMotion()
   return (
-    <motion.article className="feature-match-card" initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.28, delay: reduceMotion ? 0 : index * 0.07 }}>
-      <div className="feature-match-top"><span className="feature-avatar">{profile.name.split(' ').slice(0, 2).map((part) => part[0]).join('')}</span><span className="feature-score">{profile.compatibility}%<small>illustrative</small></span></div>
-      <h3>{profile.name}</h3>
-      <p className="feature-match-role">{profile.role} · sample role</p>
-      <div className="feature-match-section"><span>Can offer</span><div className="feature-tag-row">{profile.skills.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div></div>
-      <div className="feature-match-section"><span>Would like to learn</span><div className="feature-tag-row">{profile.wantsToLearn.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div></div>
-      <div className="feature-match-section"><span>Interests</span><div className="feature-tag-row">{profile.interests.map((interest) => <FeatureTag key={interest}>{interest}</FeatureTag>)}</div></div>
-      <p className="feature-small-note">Static sample profile · score is an illustration, not a calculated match.</p>
-    </motion.article>
+    <StaggerItemArticle
+      staggerIndex={index}
+      staggerMs={70}
+      initialY={14}
+      duration={0.38}
+      className="feature-match-card"
+    >
+      <MicroPressCard>
+        <div className="feature-match-top"><span className="feature-avatar">{profile.name.split(' ').slice(0, 2).map((part) => part[0]).join('')}</span><span className="feature-score">{profile.compatibility}%<small>illustrative</small></span></div>
+        <h3>{profile.name}</h3>
+        <p className="feature-match-role">{profile.role} · sample role</p>
+        <div className="feature-match-section"><span>Can offer</span><div className="feature-tag-row">{profile.skills.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div></div>
+        <div className="feature-match-section"><span>Would like to learn</span><div className="feature-tag-row">{profile.wantsToLearn.map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div></div>
+        <div className="feature-match-section"><span>Interests</span><div className="feature-tag-row">{profile.interests.map((interest) => <FeatureTag key={interest}>{interest}</FeatureTag>)}</div></div>
+        <p className="feature-small-note">Static sample profile · score is an illustration, not a calculated match.</p>
+      </MicroPressCard>
+    </StaggerItemArticle>
   )
 }
 
@@ -97,7 +105,11 @@ export function TeamMatcherPage() {
         <Button onClick={() => setShowResults(false)} variant="outline">Edit preferences</Button>
       </Card>
       <div className="feature-preference-summary"><strong>Your selected preferences</strong><p><b>Can contribute:</b> {skills.join(', ')} · <b>Want to learn:</b> {learning.join(', ')}</p><p><b>Domains:</b> {domains.join(', ')} · <b>Roles:</b> {roles.join(', ')} · <b>Experience:</b> {experience} · <b>Collaboration:</b> {collaboration.join(', ')}{availability ? ` · Availability: ${availability}` : ''}</p></div>
-      <div className="feature-match-grid">{demoMatchProfiles.map((profile, index) => <MatchProfileCard index={index} key={profile.id} profile={profile} />)}</div>
+      <div className="feature-match-grid">
+        <StaggerContainer staggerMs={70} viewportAmount={0.15}>
+          {demoMatchProfiles.map((profile, index) => <MatchProfileCard index={index} key={profile.id} profile={profile} />)}
+        </StaggerContainer>
+      </div>
     </motion.div>
   ) : (
     <motion.form className="feature-matcher-form" key="form" noValidate onSubmit={submit} initial={false} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: reduceMotion ? 0 : 0.22 }}>

@@ -1,0 +1,22 @@
+ docs/NEMOTRON_PHASE_1_AUDIT.md               | 442 [32m+++++++++++++++++++++++++++[m
+ docs/NEMOTRON_PHASE_2_REPORT.md              | 183 [32m+++++++++++[m
+ docs/NEMOTRON_PHASE_3_REPORT.md              |  91 [32m++++++[m
+ src/App.tsx                                  |  27 [32m+[m[31m-[m
+ src/components/dashboard/DashboardLayout.tsx |   5 [32m+[m[31m-[m
+ src/components/layout/PageTransition.tsx     |  21 [32m++[m
+ src/components/ui/MicroPress.tsx             | 116 [32m+++++++[m
+ src/components/ui/Shake.tsx                  |  23 [32m++[m
+ src/components/ui/Skeleton.tsx               |  96 [32m++++++[m
+ src/components/ui/Stagger.tsx                | 123 [32m++++++++[m
+ src/components/ui/index.ts                   |   5 [32m+[m
+ src/components/ui/useShakeTrigger.ts         |   7 [32m+[m
+ src/index.css                                |  24 [32m++[m
+ src/pages/AssignmentsPage.tsx                |  30 [32m+[m[31m-[m
+ src/pages/DashboardPage.tsx                  |  51 [32m++[m[31m--[m
+ src/pages/HackathonsPage.tsx                 |  17 [32m+[m[31m-[m
+ src/pages/LandingPage.tsx                    |  67 [32m++[m[31m--[m
+ src/pages/MentorsPage.tsx                    |   8 [32m+[m[31m-[m
+ src/pages/SignupPage.tsx                     |  25 [32m+[m[31m-[m
+ src/pages/SkillSwapPage.tsx                  |  36 [32m++[m[31m-[m
+ src/pages/TeamsPage.tsx                      |  46 [32m++[m[31m-[m
+ 21 files changed, 1325 insertions(+), 118 deletions(-)

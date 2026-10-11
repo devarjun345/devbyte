@@ -10,7 +10,8 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import { Reveal } from '../components/marketing/Reveal'
 import { Badge, Card } from '../components/ui'
-import { MicroPress } from '../components/ui'
+import { MicroPress, MicroPressCard } from '../components/ui'
+import { StaggerContainer, StaggerItem, StaggerItemArticle } from '../components/ui'
 import {
   dashboardDemoActivity,
   dashboardDemoOpportunities,
@@ -52,20 +53,14 @@ function CountUp({
 }
 
 function MetricCard({ metric, index }: { metric: DashboardMetric; index: number }) {
-  const reduceMotion = useReducedMotion()
-
   return (
-    <motion.article
+    <StaggerItemArticle
       aria-label={`${metric.value}${metric.suffix} ${metric.label}, demo preview`}
       className="dashboard-metric-card"
-      initial={reduceMotion ? false : { opacity: 0, y: 13 }}
-      transition={{
-        duration: reduceMotion ? 0 : 0.42,
-        delay: reduceMotion ? 0 : index * 0.07,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
+      staggerIndex={index}
+      staggerMs={70}
+      initialY={14}
+      duration={0.38}
     >
       <div className="dashboard-metric-top">
         <span className={`dashboard-metric-icon metric-icon-${index}`} aria-hidden="true">
@@ -78,7 +73,7 @@ function MetricCard({ metric, index }: { metric: DashboardMetric; index: number 
       </p>
       <h2>{metric.label}</h2>
       <p className="dashboard-metric-caption">{metric.change}</p>
-    </motion.article>
+    </StaggerItemArticle>
   )
 }
 
@@ -111,25 +106,31 @@ function ActivityFeed({ items }: { items: DemoActivity[] }) {
   return (
     <Card className="dashboard-panel">
       <SectionHeading eyebrow="A LITTLE MOMENTUM" title="Recent activity" />
-      <ol className="dashboard-activity-list">
-        {items.map((item, index) => (
-          <li className="dashboard-activity-item" key={item.marker}>
-            <span aria-hidden="true" className={`dashboard-activity-dot activity-dot-${index}`} />
-            <div className="dashboard-activity-copy">
-              <h3>{item.label}</h3>
-              <p>{item.detail}</p>
-            </div>
-            <span className="dashboard-demo-marker">{item.marker}</span>
-          </li>
-        ))}
-      </ol>
+      <StaggerContainer staggerMs={50} viewportAmount={0.15}>
+        <ol className="dashboard-activity-list">
+          {items.map((item, index) => (
+            <StaggerItem
+              key={item.marker}
+              staggerIndex={index}
+              initialY={8}
+              duration={0.28}
+              className="dashboard-activity-item"
+            >
+              <span aria-hidden="true" className={`dashboard-activity-dot activity-dot-${index}`} />
+              <div className="dashboard-activity-copy">
+                <h3>{item.label}</h3>
+                <p>{item.detail}</p>
+              </div>
+              <span className="dashboard-demo-marker">{item.marker}</span>
+            </StaggerItem>
+          ))}
+        </ol>
+      </StaggerContainer>
     </Card>
   )
 }
 
 function ProgressSection({ items }: { items: DemoProgress[] }) {
-  const reduceMotion = useReducedMotion()
-
   return (
     <Card className="dashboard-panel">
       <SectionHeading
@@ -139,7 +140,14 @@ function ProgressSection({ items }: { items: DemoProgress[] }) {
       />
       <div className="dashboard-progress-list">
         {items.map((item, index) => (
-          <div className="dashboard-progress-item" key={item.label}>
+          <StaggerItem
+            key={item.label}
+            staggerIndex={index}
+            staggerMs={80}
+            initialY={10}
+            duration={0.32}
+            className="dashboard-progress-item"
+          >
             <div className="dashboard-progress-heading">
               <div>
                 <h3>{item.label}</h3>
@@ -158,16 +166,16 @@ function ProgressSection({ items }: { items: DemoProgress[] }) {
               <motion.span
                 animate={{ scaleX: item.value / 100 }}
                 className={`dashboard-progress-fill progress-fill-${index}`}
-                initial={reduceMotion ? false : { scaleX: 0 }}
+                initial={false}
                 style={{ transformOrigin: 'left' }}
                 transition={{
-                  duration: reduceMotion ? 0 : 0.75,
-                  delay: reduceMotion ? 0 : 0.12 * index,
+                  duration: 0.75,
+                  delay: 0.12 * index,
                   ease: [0.22, 1, 0.36, 1],
                 }}
               />
             </div>
-          </div>
+          </StaggerItem>
         ))}
       </div>
       <p className="dashboard-panel-footnote">
@@ -209,11 +217,21 @@ function UpcomingOpportunities({ items }: { items: DemoOpportunity[] }) {
       <p className="dashboard-opportunity-disclaimer">
         Dates and availability are sample content, not verified events.
       </p>
-      <div className="dashboard-opportunity-list">
-        {items.map((item) => (
-          <OpportunityCard item={item} key={item.title} />
-        ))}
-      </div>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="dashboard-opportunity-list">
+          {items.map((item, index) => (
+            <StaggerItem
+              key={item.title}
+              staggerIndex={index}
+              initialY={10}
+              duration={0.32}
+              className="dashboard-opportunity-item"
+            >
+              <OpportunityCard item={item} />
+            </StaggerItem>
+          ))}
+        </div>
+      </StaggerContainer>
     </Card>
   )
 }
@@ -243,44 +261,51 @@ function QuickActions() {
   return (
     <Card className="dashboard-panel dashboard-quick-panel">
       <SectionHeading eyebrow="GO SOMEWHERE NEXT" title="Quick actions" />
-      <div className="dashboard-quick-actions">
-        {quickActions.map((action, index) => (
-          <MicroPress asChild key={action.to}>
-            <Link className="dashboard-quick-action" to={action.to}>
-              <span className={`dashboard-quick-icon quick-icon-${index}`} aria-hidden="true">
-                {action.icon}
-              </span>
-              <span className="dashboard-quick-copy">
-                <strong>{action.title}</strong>
-                <small>{action.text}</small>
-              </span>
-              <span aria-hidden="true" className="dashboard-quick-arrow">↗</span>
-            </Link>
-          </MicroPress>
-        ))}
-      </div>
+      <StaggerContainer staggerMs={60} viewportAmount={0.15}>
+        <div className="dashboard-quick-actions">
+          {quickActions.map((action, index) => (
+            <StaggerItem
+              key={action.to}
+              staggerIndex={index}
+              initialY={8}
+              duration={0.28}
+              className="dashboard-quick-action-wrapper"
+            >
+              <MicroPressCard asChild>
+                <Link className="dashboard-quick-action" to={action.to}>
+                  <span className={`dashboard-quick-icon quick-icon-${index}`} aria-hidden="true">
+                    {action.icon}
+                  </span>
+                  <span className="dashboard-quick-copy">
+                    <strong>{action.title}</strong>
+                    <small>{action.text}</small>
+                  </span>
+                  <span aria-hidden="true" className="dashboard-quick-arrow">↗</span>
+                </Link>
+              </MicroPressCard>
+            </StaggerItem>
+          ))}
+        </div>
+      </StaggerContainer>
     </Card>
   )
 }
 
 export function DashboardPage() {
-  const reduceMotion = useReducedMotion()
-
   return (
     <div className="student-dashboard">
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
+      <StaggerItemArticle
         className="dashboard-welcome"
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+        initialY={12}
+        duration={0.46}
       >
         <div className="dashboard-welcome-copy">
           <span className="dashboard-welcome-eyebrow">
             YOUR SPACE TO BUILD
-            <span aria-hidden="true" />
+            <span aria-hidden="true" className="dashboard-welcome-dot" />
             PREVIEW
           </span>
-          <h2>Welcome back, Developer</h2>
+          <h1>Welcome back, Developer</h1>
           <p>
             A calm place to find your next challenge, connect with people, and
             keep learning at your own pace.
@@ -308,7 +333,7 @@ export function DashboardPage() {
           <span className="welcome-art-node welcome-node-two">Learn</span>
           <span className="welcome-art-node welcome-node-three">Share</span>
         </div>
-      </motion.div>
+      </StaggerItemArticle>
 
       <div className="dashboard-demo-banner" role="note">
         <Badge variant="warning">Demo preview</Badge>
@@ -319,9 +344,11 @@ export function DashboardPage() {
       </div>
 
       <section aria-label="Overview metrics" className="dashboard-metrics-grid">
-        {dashboardMetrics.map((metric, index) => (
-          <MetricCard index={index} key={metric.label} metric={metric} />
-        ))}
+        <StaggerContainer staggerMs={70} viewportAmount={0.15}>
+          {dashboardMetrics.map((metric, index) => (
+            <MetricCard index={index} key={metric.label} metric={metric} />
+          ))}
+        </StaggerContainer>
       </section>
 
       <div className="dashboard-section-grid">
