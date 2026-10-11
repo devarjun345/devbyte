@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276 64" fill="none">
+  <title>DEV BYTE — monochrome</title>
+  <g stroke="#0B0F0A">
+    <path d="m11 18-6 14 6 14M53 18l6 14-6 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"/>
+    <path d="M17 17h9a15 15 0 0 1 0 30h-9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5"/>
+    <path d="M29 17h8a8 8 0 0 1 0 16h-8m8 0a9 9 0 0 1 0 14h-8V17" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5"/>
+  </g>
+  <text x="76" y="40" fill="#0B0F0A" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="2.2">DEV BYTE</text>
+</svg>

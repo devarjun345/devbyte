@@ -1,0 +1,83 @@
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+@import './marketing.css';
+@import './dashboard.css';
+@import './features.css';
+@import './practice.css';
+@import './mentors.css';
+
+@theme {
+  --color-soft-white: #FAFAF8;
+  --color-white: #FFFFFF;
+  --color-sage-green: #A7C957;
+  --color-deep-olive: #3F5128;
+  --color-black: #0B0F0A;
+  --color-light-gray: #F1F2EE;
+  --color-muted-green: #E8F0E4;
+  --color-border: #E5E7DE;
+  --color-secondary-text: #6B7280;
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  --color-success-surface: #E8F0E4;
+  --color-warning-surface: #FEF3C7;
+  --color-error-surface: #FEE2E2;
+  --color-info-surface: #DBEAFE;
+  --font-sans: 'Inter Variable', Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-black);
+  background: var(--color-soft-white);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: var(--color-black);
+  background: var(--color-muted-green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
