@@ -2,14 +2,16 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
+import { StaggerContainer, StaggerItemArticle, MicroPress } from '../components/ui'
+import { Shake, useShakeTrigger } from '../components/ui'
 import { demoTeams, type DemoTeam } from './phase4-demo-data'
 
 const interests = [...new Set(demoTeams.flatMap((team) => team.interests))]
 const teamSkills = [...new Set(demoTeams.flatMap((team) => team.skills))]
 
-function TeamCard({ team }: { team: DemoTeam }) {
+function TeamCard({ team, ...staggerProps }: { team: DemoTeam } & Record<string, unknown>) {
   return (
-    <Card className="feature-listing-card team-card">
+    <StaggerItemArticle {...staggerProps} className="feature-listing-card team-card">
       <div className="feature-card-meta">
         <FeatureTag>{team.status} · sample</FeatureTag>
         <span className="feature-status-pill status-upcoming">{team.collaboration}</span>
@@ -23,10 +25,12 @@ function TeamCard({ team }: { team: DemoTeam }) {
       </div>
       <div className="feature-tag-row">{team.skills.slice(0, 4).map((skill) => <FeatureTag key={skill}>{skill}</FeatureTag>)}</div>
       <div className="feature-team-card-actions">
-        <Link className="feature-card-link" to={`/build/teams/${team.id}`}>View team <span aria-hidden="true">↗</span></Link>
-        {team.status === 'Forming' && <Link className="feature-text-link" to={`/build/teams/${team.id}/join`}>Explore joining</Link>}
+        <MicroPress asChild>
+          <Link className="feature-card-link" to={`/build/teams/${team.id}`}>View team <span aria-hidden="true">↗</span></Link>
+        </MicroPress>
+        {team.status === 'Forming' && <MicroPress asChild><Link className="feature-text-link" to={`/build/teams/${team.id}/join`}>Explore joining</Link></MicroPress>}
       </div>
-    </Card>
+    </StaggerItemArticle>
   )
 }
 
@@ -73,6 +77,7 @@ function CreateTeam() {
   const [values, setValues] = useState({ name: '', project: '', description: '', skills: '', roles: '', collaboration: '' })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState(false)
+  const { trigger, shake } = useShakeTrigger()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -84,7 +89,9 @@ function CreateTeam() {
     if (!values.roles.split(',').some((item) => item.trim())) nextErrors.roles = 'Add at least one role or skill you are looking for.'
     if (!values.collaboration) nextErrors.collaboration = 'Choose a collaboration preference.'
     setErrors(nextErrors)
-    setPreview(Object.keys(nextErrors).length === 0)
+    const isValid = Object.keys(nextErrors).length === 0
+    setPreview(isValid)
+    if (!isValid) shake()
   }
 
   return (
@@ -96,7 +103,8 @@ function CreateTeam() {
     >
       <Card className="feature-form-card">
         <p className="feature-form-disclaimer">No team is saved or published. Your entries stay in this temporary page state.</p>
-        <form className="feature-form" noValidate onSubmit={submit}>
+        <Shake trigger={trigger}>
+          <form className="feature-form" noValidate onSubmit={submit}>
           <Input autoComplete="off" error={errors.name} label="Team name" maxLength={60} onChange={(e) => setValues({ ...values, name: e.target.value })} placeholder="e.g. Prototype Club" value={values.name} />
           <Input autoComplete="off" error={errors.project} label="Project title" maxLength={80} onChange={(e) => setValues({ ...values, project: e.target.value })} placeholder="What are you building?" value={values.project} />
           <label className="feature-select-label feature-form-wide">Project description
@@ -110,7 +118,8 @@ function CreateTeam() {
             {errors.collaboration && <span className="feature-field-error">{errors.collaboration}</span>}
           </label>
           <div className="feature-form-wide feature-form-submit"><Button type="submit">Create local preview <span aria-hidden="true">↗</span></Button></div>
-        </form>
+</form>
+        </Shake>
         {preview && <div className="feature-created-preview">
           <StatusNotice title="Temporary local team preview">Nothing was saved or sent. This preview exists only until you leave or reload this page.</StatusNotice>
           <h2>{values.name}</h2><p className="feature-team-project">{values.project}</p><p>{values.description}</p>
@@ -127,6 +136,7 @@ function JoinTeam({ team }: { team: DemoTeam }) {
   const [skills, setSkills] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState(false)
+  const { trigger, shake } = useShakeTrigger()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -134,7 +144,9 @@ function JoinTeam({ team }: { team: DemoTeam }) {
     if (intro.trim().length < 30) nextErrors.intro = 'Please write at least 30 characters so the introduction has useful context.'
     if (skills.trim().length < 2) nextErrors.skills = 'Add at least one relevant skill.'
     setErrors(nextErrors)
-    setPreview(Object.keys(nextErrors).length === 0)
+    const isValid = Object.keys(nextErrors).length === 0
+    setPreview(isValid)
+    if (!isValid) shake()
   }
 
   return (
@@ -144,12 +156,14 @@ function JoinTeam({ team }: { team: DemoTeam }) {
         <div className="feature-tag-row">{team.openRoles.map((role) => <FeatureTag key={role}>{role}</FeatureTag>)}</div>
         <p className="feature-form-disclaimer">This is a local request draft for a sample team; it does not contact members or change team membership.</p>
         <form className="feature-form feature-form-single" noValidate onSubmit={submit}>
-          <label className="feature-select-label">Short introduction
-            <textarea aria-describedby={errors.intro ? 'join-intro-error' : undefined} aria-invalid={Boolean(errors.intro)} maxLength={500} onChange={(e) => setIntro(e.target.value)} placeholder="Share what interests you about the project and how you might contribute." rows={5} value={intro} />
-            <span className={errors.intro ? 'feature-field-error' : 'feature-field-hint'} id={errors.intro ? 'join-intro-error' : undefined}>{errors.intro ?? `${intro.length}/500 · at least 30 characters`}</span>
-          </label>
-          <Input error={errors.skills} label="Relevant skills" onChange={(e) => setSkills(e.target.value)} placeholder="React, CSS, user research" value={skills} />
-          <Button type="submit">Preview introduction</Button>
+          <Shake trigger={trigger}>
+            <label className="feature-select-label">Short introduction
+              <textarea aria-describedby={errors.intro ? 'join-intro-error' : undefined} aria-invalid={Boolean(errors.intro)} maxLength={500} onChange={(e) => setIntro(e.target.value)} placeholder="Share what interests you about the project and how you might contribute." rows={5} value={intro} />
+              <span className={errors.intro ? 'feature-field-error' : 'feature-field-hint'} id={errors.intro ? 'join-intro-error' : undefined}>{errors.intro ?? `${intro.length}/500 · at least 30 characters`}</span>
+            </label>
+            <Input error={errors.skills} label="Relevant skills" onChange={(e) => setSkills(e.target.value)} placeholder="React, CSS, user research" value={skills} />
+            <Button type="submit">Preview introduction</Button>
+          </Shake>
         </form>
         {preview && <div className="feature-created-preview"><StatusNotice title="Introduction preview only">No join request was sent. You are not a member of this team.</StatusNotice><p>{intro}</p><div className="feature-tag-row">{skills.split(',').map((item) => item.trim()).filter(Boolean).map((item) => <FeatureTag key={item}>{item}</FeatureTag>)}</div></div>}
       </Card>
@@ -206,7 +220,7 @@ export function TeamsPage() {
         </div>
       </Card>
       <div className="feature-results-heading"><SectionTitle eyebrow="FICTIONAL PROJECT GROUPS" title="Team previews" /><span>{filteredTeams.length} {filteredTeams.length === 1 ? 'team' : 'teams'}</span></div>
-      {filteredTeams.length ? <div className="feature-card-grid">{filteredTeams.map((item) => <TeamCard key={item.id} team={item} />)}</div> : <EmptyResults description="Try a different keyword or remove some filters." onReset={clearFilters} title="No demo teams match" />}
+      {filteredTeams.length ? <StaggerContainer className="feature-card-grid">{filteredTeams.map((item) => <TeamCard key={item.id} team={item} />)}</StaggerContainer> : <EmptyResults description="Try a different keyword or remove some filters." onReset={clearFilters} title="No demo teams match" />}
     </FeaturePage>
   )
 }

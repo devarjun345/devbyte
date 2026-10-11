@@ -3,6 +3,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
+import { Shake, useShakeTrigger } from '../components/ui'
 import { bookingDates, demoMentors, mentorDemoSlots, mentorSessions, type DemoMentor } from './phase6-demo-data'
 
 const categories = [...new Set(demoMentors.map((mentor) => mentor.category))]
@@ -80,6 +81,7 @@ function BookingFlow({ mentor }: { mentor: DemoMentor }) {
   const [note, setNote] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [step, setStep] = useState<'select' | 'review' | 'confirmed'>('select')
+  const { trigger, shake } = useShakeTrigger()
 
   function review(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -89,7 +91,9 @@ function BookingFlow({ mentor }: { mentor: DemoMentor }) {
     if (!time) nextErrors.time = 'Choose an illustrative time.'
     if (note.trim().length < 15) nextErrors.note = 'Add at least 15 characters about your mentorship goal.'
     setErrors(nextErrors)
-    if (!Object.keys(nextErrors).length) setStep('review')
+    const isValid = Object.keys(nextErrors).length === 0
+    if (isValid) setStep('review')
+    else shake()
   }
 
   const sessionInfo = mentorSessions.find((item) => String(item.duration) === session)
@@ -106,6 +110,7 @@ function BookingFlow({ mentor }: { mentor: DemoMentor }) {
         <p className="mentor-booking-notice">This is a frontend-only booking preview. No calendar, payment, email, or network request is connected.</p>
         <AnimatePresence mode="wait" initial={false}>
           {step === 'select' && <motion.form className="mentor-booking-form" key="select" noValidate onSubmit={review} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16 }}>
+            <Shake trigger={trigger}>
             <label className="feature-select-label">Session format
               <select aria-describedby={errors.session ? 'booking-session-error' : undefined} aria-invalid={Boolean(errors.session)} onChange={(event) => setSession(event.target.value)} value={session}><option value="">Choose a session</option>{mentorSessions.map((item) => <option key={item.duration} value={item.duration}>{item.duration} minutes · {item.label}</option>)}</select>
               {errors.session && <span className="feature-field-error" id="booking-session-error">{errors.session}</span>}
@@ -120,6 +125,7 @@ function BookingFlow({ mentor }: { mentor: DemoMentor }) {
               <span className={errors.note ? 'feature-field-error' : 'feature-field-hint'} id={errors.note ? 'booking-note-error' : 'booking-note-help'}>{errors.note ?? `${note.length}/400 · at least 15 characters`}</span>
             </label>
             <Button type="submit">Review session preview <span aria-hidden="true">→</span></Button>
+          </Shake>
           </motion.form>}
           {step === 'review' && <motion.section aria-labelledby="booking-review-title" className="mentor-booking-review" key="review" initial={reduceMotion ? false : { opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? undefined : { opacity: 0, x: -8 }} transition={{ duration: reduceMotion ? 0 : 0.18 }}>
             <p className="feature-eyebrow">CHECK YOUR SELECTIONS</p><h2 id="booking-review-title">Session summary preview</h2>

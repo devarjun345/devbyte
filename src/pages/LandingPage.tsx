@@ -14,6 +14,7 @@ import { EcosystemVisual } from '../components/marketing/EcosystemVisual'
 import { MagneticLink } from '../components/marketing/MagneticLink'
 import { ParallaxPanel } from '../components/marketing/ParallaxPanel'
 import { Reveal } from '../components/marketing/Reveal'
+import { MicroPress } from '../components/ui'
 
 const features = [
   {
@@ -254,9 +255,11 @@ function HeroSection() {
             <MagneticLink className="button-primary hero-primary" to="/signup">
               Get started <span className="button-arrow" aria-hidden="true">↗</span>
             </MagneticLink>
-            <a className="button-secondary" href="#how-it-works">
-              See how it works <span aria-hidden="true">↓</span>
-            </a>
+            <MicroPress asChild>
+              <a className="button-secondary" href="#how-it-works">
+                See how it works <span aria-hidden="true">↓</span>
+              </a>
+            </MicroPress>
           </motion.div>
           <motion.p
             animate={{ opacity: 1 }}
@@ -384,9 +387,11 @@ function FeatureShowcase() {
                 <p className="showcase-overline">A LITTLE MORE {feature.label.toUpperCase()}</p>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
+                <MicroPress asChild>
                 <Link className="text-link" to="/signup">
                   Explore your possibilities <span aria-hidden="true">↗</span>
                 </Link>
+              </MicroPress>
               </motion.div>
             </AnimatePresence>
             <div
@@ -415,21 +420,23 @@ function FeatureShowcase() {
         <div className="feature-strip">
           {features.map((item, index) => (
             <Reveal delay={index * 0.06} key={item.id}>
-              <button
-                aria-label={`Show ${item.label}`}
-                className={`feature-strip-item ${activeFeature === index ? 'is-current' : ''}`}
-                onClick={() => {
-                  setActiveFeature(index)
-                  document
-                    .getElementById('explore')
-                    ?.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' })
-                }}
-                type="button"
-              >
-                <span className="feature-strip-number">0{index + 1}</span>
-                <span>{item.label}</span>
-                <span aria-hidden="true">↗</span>
-              </button>
+              <MicroPress asChild>
+                <button
+                  aria-label={`Show ${item.label}`}
+                  className={`feature-strip-item ${activeFeature === index ? 'is-current' : ''}`}
+                  onClick={() => {
+                    setActiveFeature(index)
+                    document
+                      .getElementById('explore')
+                      ?.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' })
+                  }}
+                  type="button"
+                >
+                  <span className="feature-strip-number">0{index + 1}</span>
+                  <span>{item.label}</span>
+                  <span aria-hidden="true">↗</span>
+                </button>
+              </MicroPress>
             </Reveal>
           ))}
         </div>
@@ -452,9 +459,11 @@ function HowItWorks() {
             No perfect plan required. Follow your interests, meet your people,
             and let the learning add up.
           </p>
-          <Link className="text-link" to="/signup">
-            Take your first step <span aria-hidden="true">↗</span>
-          </Link>
+          <MicroPress asChild>
+            <Link className="text-link" to="/signup">
+              Take your first step <span aria-hidden="true">↗</span>
+            </Link>
+          </MicroPress>
         </Reveal>
         <div className="process-steps">
           {steps.map((step, index) => (
@@ -512,9 +521,11 @@ function AudienceSection() {
                 Find challenges, meet collaborators, and make your learning
                 visible through the things you build.
               </p>
-              <Link className="audience-link" to="/signup?role=student">
-                Join as a student <span aria-hidden="true">↗</span>
-              </Link>
+              <MicroPress asChild>
+                <Link className="audience-link" to="/signup?role=student">
+                  Join as a student <span aria-hidden="true">↗</span>
+                </Link>
+              </MicroPress>
             </ParallaxPanel>
           </Reveal>
           <Reveal delay={0.12}>
@@ -534,9 +545,11 @@ function AudienceSection() {
                 Share perspective, help a new idea find its footing, and give
                 back to the community you’re part of.
               </p>
-              <Link className="audience-link" to="/signup?role=mentor">
-                Join as a mentor <span aria-hidden="true">↗</span>
-              </Link>
+              <MicroPress asChild>
+                <Link className="audience-link" to="/signup?role=mentor">
+                  Join as a mentor <span aria-hidden="true">↗</span>
+                </Link>
+              </MicroPress>
             </ParallaxPanel>
           </Reveal>
         </div>

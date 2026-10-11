@@ -10,6 +10,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import { Reveal } from '../components/marketing/Reveal'
 import { Badge, Card } from '../components/ui'
+import { MicroPress } from '../components/ui'
 import {
   dashboardDemoActivity,
   dashboardDemoOpportunities,
@@ -187,9 +188,11 @@ function OpportunityCard({ item }: { item: DemoOpportunity }) {
       <p>{item.description}</p>
       <div className="dashboard-opportunity-footer">
         <span>{item.date}</span>
-        <Link aria-label={`View ${item.title} preview`} to="/discover/hackathons">
-          Details <span aria-hidden="true">↗</span>
-        </Link>
+        <MicroPress asChild>
+          <Link aria-label={`View ${item.title} preview`} to="/discover/hackathons">
+            Details <span aria-hidden="true">↗</span>
+          </Link>
+        </MicroPress>
       </div>
     </article>
   )
@@ -242,20 +245,18 @@ function QuickActions() {
       <SectionHeading eyebrow="GO SOMEWHERE NEXT" title="Quick actions" />
       <div className="dashboard-quick-actions">
         {quickActions.map((action, index) => (
-          <Link
-            className="dashboard-quick-action"
-            key={action.to}
-            to={action.to}
-          >
-            <span className={`dashboard-quick-icon quick-icon-${index}`} aria-hidden="true">
-              {action.icon}
-            </span>
-            <span className="dashboard-quick-copy">
-              <strong>{action.title}</strong>
-              <small>{action.text}</small>
-            </span>
-            <span aria-hidden="true" className="dashboard-quick-arrow">↗</span>
-          </Link>
+          <MicroPress asChild key={action.to}>
+            <Link className="dashboard-quick-action" to={action.to}>
+              <span className={`dashboard-quick-icon quick-icon-${index}`} aria-hidden="true">
+                {action.icon}
+              </span>
+              <span className="dashboard-quick-copy">
+                <strong>{action.title}</strong>
+                <small>{action.text}</small>
+              </span>
+              <span aria-hidden="true" className="dashboard-quick-arrow">↗</span>
+            </Link>
+          </MicroPress>
         ))}
       </div>
     </Card>
@@ -285,12 +286,16 @@ export function DashboardPage() {
             keep learning at your own pace.
           </p>
           <div className="dashboard-welcome-actions">
-            <Link className="dashboard-primary-link" to="/discover/hackathons">
-              Explore hackathons <span aria-hidden="true">↗</span>
-            </Link>
-            <Link className="dashboard-secondary-link" to="/discover/team-matcher">
-              Find teammates
-            </Link>
+            <MicroPress asChild>
+              <Link className="dashboard-primary-link" to="/discover/hackathons">
+                Explore hackathons <span aria-hidden="true">↗</span>
+              </Link>
+            </MicroPress>
+            <MicroPress asChild>
+              <Link className="dashboard-secondary-link" to="/discover/team-matcher">
+                Find teammates
+              </Link>
+            </MicroPress>
           </div>
         </div>
         <div aria-hidden="true" className="dashboard-welcome-art">

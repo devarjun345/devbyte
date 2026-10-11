@@ -2,13 +2,14 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
+import { StaggerContainer, StaggerItemArticle, MicroPress } from '../components/ui'
 import { demoHackathons, type DemoHackathon, type EventMode, type HackathonStatus } from './phase4-demo-data'
 
 const categories = [...new Set(demoHackathons.map((event) => event.category))]
 
-function HackathonCard({ event }: { event: DemoHackathon }) {
+function HackathonCard({ event, ...staggerProps }: { event: DemoHackathon } & Record<string, unknown>) {
   return (
-    <Card className="feature-listing-card hackathon-card">
+    <StaggerItemArticle {...staggerProps} className="feature-listing-card hackathon-card">
       <div className="feature-card-meta">
         <FeatureTag>{event.category}</FeatureTag>
         <span className={`feature-status-pill status-${event.status.toLowerCase()}`}>{event.status} · sample</span>
@@ -21,10 +22,12 @@ function HackathonCard({ event }: { event: DemoHackathon }) {
         <span><b aria-hidden="true">◇</b> {event.organizer}</span>
       </div>
       <div className="feature-tag-row">{event.tags.map((tag) => <FeatureTag key={tag}>{tag}</FeatureTag>)}</div>
-      <Link className="feature-card-link" to={`/discover/hackathons/${event.id}`}>
-        View event brief <span aria-hidden="true">↗</span>
-      </Link>
-    </Card>
+      <MicroPress asChild>
+        <Link className="feature-card-link" to={`/discover/hackathons/${event.id}`}>
+          View event brief <span aria-hidden="true">↗</span>
+        </Link>
+      </MicroPress>
+    </StaggerItemArticle>
   )
 }
 
@@ -149,7 +152,7 @@ export function HackathonsPage() {
         </div>
       </Card>
       <div className="feature-results-heading"><SectionTitle eyebrow="SAMPLE LISTINGS" title="Explore event briefs" /><span>{filteredEvents.length} {filteredEvents.length === 1 ? 'brief' : 'briefs'}</span></div>
-      {filteredEvents.length ? <div className="feature-card-grid">{filteredEvents.map((item) => <HackathonCard event={item} key={item.id} />)}</div> : <EmptyResults description="Try a different search or remove one of the filters." onReset={clearFilters} title="No sample briefs match" />}
+      {filteredEvents.length ? <StaggerContainer className="feature-card-grid">{filteredEvents.map((item) => <HackathonCard event={item} key={item.id} />)}</StaggerContainer> : <EmptyResults description="Try a different search or remove one of the filters." onReset={clearFilters} title="No sample briefs match" />}
     </FeaturePage>
   )
 }

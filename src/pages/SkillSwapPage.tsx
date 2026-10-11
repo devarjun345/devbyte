@@ -2,22 +2,25 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
+import { StaggerContainer, StaggerItemArticle, MicroPress, Shake, useShakeTrigger } from '../components/ui'
 import { demoSkillSwaps, type DemoSkillSwap } from './phase4-demo-data'
 
 const skillCategories = [...new Set(demoSkillSwaps.map((swap) => swap.category))]
 const skillLevels = ['Beginner', 'Intermediate', 'Advanced'] as const
 type Direction = 'all' | 'teach' | 'learn'
 
-function SkillSwapCard({ swap }: { swap: DemoSkillSwap }) {
+function SkillSwapCard({ swap, ...staggerProps }: { swap: DemoSkillSwap } & Record<string, unknown>) {
   return (
-    <Card className="feature-listing-card skill-swap-card">
+    <StaggerItemArticle {...staggerProps} className="feature-listing-card skill-swap-card">
       <div className="feature-card-meta"><FeatureTag>{swap.category}</FeatureTag><span className="feature-status-pill status-upcoming">{swap.level} · sample</span></div>
       <div className="feature-swap-profile"><span className="feature-avatar">{swap.partnerInitials}</span><div><strong>{swap.partnerName}</strong><small>Fictional peer-learning preview</small></div></div>
       <h2 className="feature-swap-title">Share {swap.offering}<span aria-hidden="true">↔</span> learn {swap.seeking}</h2>
       <p className="feature-card-description">{swap.summary}</p>
       <div className="feature-tag-row"><FeatureTag>Can teach: {swap.offering}</FeatureTag><FeatureTag>Wants to learn: {swap.seeking}</FeatureTag></div>
+      <MicroPress asChild>
       <Link className="feature-card-link" to={`/discover/skill-swap/${swap.id}`}>View exchange details <span aria-hidden="true">↗</span></Link>
-    </Card>
+    </MicroPress>
+    </StaggerItemArticle>
   )
 }
 
@@ -45,6 +48,7 @@ function ExchangeRequest({ swap }: { swap: DemoSkillSwap }) {
   const [goal, setGoal] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState(false)
+  const { trigger, shake } = useShakeTrigger()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -52,7 +56,9 @@ function ExchangeRequest({ swap }: { swap: DemoSkillSwap }) {
     if (message.trim().length < 25) nextErrors.message = 'Write at least 25 characters to explain what you hope to exchange.'
     if (!goal.trim()) nextErrors.goal = 'Add one learning goal for the exchange.'
     setErrors(nextErrors)
-    setPreview(Object.keys(nextErrors).length === 0)
+    const isValid = Object.keys(nextErrors).length === 0
+    setPreview(isValid)
+    if (!isValid) shake()
   }
 
   return (
@@ -61,15 +67,17 @@ function ExchangeRequest({ swap }: { swap: DemoSkillSwap }) {
         <div className="feature-swap-profile"><span className="feature-avatar">{swap.partnerInitials}</span><div><strong>{swap.partnerName}</strong><small>Sample exchange: {swap.offering} ↔ {swap.seeking}</small></div></div>
         <p className="feature-form-disclaimer">No message will be delivered and no exchange will be created or confirmed.</p>
         <form className="feature-form feature-form-single" noValidate onSubmit={submit}>
-          <label className="feature-select-label">What would you like to learn?
-            <textarea aria-describedby={errors.goal ? 'swap-goal-error' : undefined} aria-invalid={Boolean(errors.goal)} maxLength={240} onChange={(e) => setGoal(e.target.value)} placeholder={`e.g. Build confidence with ${swap.offering}.`} rows={3} value={goal} />
-            {errors.goal && <span className="feature-field-error" id="swap-goal-error">{errors.goal}</span>}
-          </label>
-          <label className="feature-select-label">Your introduction
-            <textarea aria-describedby={errors.message ? 'swap-message-error' : undefined} aria-invalid={Boolean(errors.message)} maxLength={500} onChange={(e) => setMessage(e.target.value)} placeholder="Share what you can offer in return and how you like to learn." rows={5} value={message} />
-            <span className={errors.message ? 'feature-field-error' : 'feature-field-hint'} id={errors.message ? 'swap-message-error' : undefined}>{errors.message ?? `${message.length}/500 · at least 25 characters`}</span>
-          </label>
-          <Button type="submit">Preview exchange request</Button>
+          <Shake trigger={trigger}>
+            <label className="feature-select-label">What would you like to learn?
+              <textarea aria-describedby={errors.goal ? 'swap-goal-error' : undefined} aria-invalid={Boolean(errors.goal)} maxLength={240} onChange={(e) => setGoal(e.target.value)} placeholder={`e.g. Build confidence with ${swap.offering}.`} rows={3} value={goal} />
+              {errors.goal && <span className="feature-field-error" id="swap-goal-error">{errors.goal}</span>}
+            </label>
+            <label className="feature-select-label">Your introduction
+              <textarea aria-describedby={errors.message ? 'swap-message-error' : undefined} aria-invalid={Boolean(errors.message)} maxLength={500} onChange={(e) => setMessage(e.target.value)} placeholder="Share what you can offer in return and how you like to learn." rows={5} value={message} />
+              <span className={errors.message ? 'feature-field-error' : 'feature-field-hint'} id={errors.message ? 'swap-message-error' : undefined}>{errors.message ?? `${message.length}/500 · at least 25 characters`}</span>
+            </label>
+            <Button type="submit">Preview exchange request</Button>
+          </Shake>
         </form>
         {preview && <div className="feature-created-preview"><StatusNotice title="Request preview only">Your text was not sent. This sample profile cannot receive messages.</StatusNotice><h2>Learning goal</h2><p>{goal}</p><h2>Your introduction</h2><p>{message}</p></div>}
       </Card>
@@ -120,7 +128,7 @@ export function SkillSwapPage() {
         </div>
       </Card>
       <div className="feature-results-heading"><SectionTitle eyebrow="FICTIONAL PEER EXCHANGES" title="Learning opportunities" /><span>{filteredSwaps.length} {filteredSwaps.length === 1 ? 'exchange' : 'exchanges'}</span></div>
-      {filteredSwaps.length ? <div className="feature-card-grid">{filteredSwaps.map((item) => <SkillSwapCard key={item.id} swap={item} />)}</div> : <EmptyResults description="Try a broader skill search or reset the filters." onReset={clearFilters} title="No sample exchanges match" />}
+      {filteredSwaps.length ? <StaggerContainer className="feature-card-grid">{filteredSwaps.map((item) => <SkillSwapCard key={item.id} swap={item} />)}</StaggerContainer> : <EmptyResults description="Try a broader skill search or reset the filters." onReset={clearFilters} title="No sample exchanges match" />}
     </FeaturePage>
   )
 }

@@ -2,22 +2,25 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router'
 import { Button, Card, EmptyState, Input } from '../components/ui'
 import { EmptyResults, FeatureBackLink, FeaturePage, FeatureTag, SectionTitle, StatusNotice } from '../components/features/FeatureUI'
+import { StaggerContainer, StaggerItemArticle, MicroPress, Shake, useShakeTrigger } from '../components/ui'
 import { demoAssignments, type AssignmentStatus, type DemoAssignment } from './phase5-demo-data'
 
 const statusValues: AssignmentStatus[] = ['Not Started', 'In Progress', 'Submitted']
 const dueDateValue = (value: string) => new Date(value).getTime()
 
-function AssignmentCard({ assignment }: { assignment: DemoAssignment }) {
+function AssignmentCard({ assignment, ...staggerProps }: { assignment: DemoAssignment } & Record<string, unknown>) {
   return (
-    <Card className="assignment-card">
+    <StaggerItemArticle {...staggerProps} className="assignment-card">
       <div className="assignment-card-top"><FeatureTag>{assignment.course}</FeatureTag><span className={`assignment-status status-${assignment.status.toLowerCase().replace(' ', '-')}`}>{assignment.status} · sample</span></div>
       <h2>{assignment.title}</h2>
       <p>{assignment.description}</p>
       <div className="assignment-card-meta"><span>Sample due date <strong>{assignment.dueDate}</strong></span><span>Priority <strong>{assignment.priority}</strong></span></div>
       <div className="assignment-progress-heading"><span>Illustrative progress</span><strong>{assignment.progress}%</strong></div>
       <div aria-label={`${assignment.title}: ${assignment.progress}% illustrative progress`} aria-valuemax={100} aria-valuemin={0} aria-valuenow={assignment.progress} className="assignment-progress-track" role="progressbar"><span style={{ transform: `scaleX(${assignment.progress / 100})` }} /></div>
+      <MicroPress asChild>
       <Link className="feature-card-link" to={`/practice/assignments/${assignment.id}`}>{assignment.status === 'Submitted' ? 'View assignment preview' : 'Open assignment'} <span aria-hidden="true">↗</span></Link>
-    </Card>
+    </MicroPress>
+    </StaggerItemArticle>
   )
 }
 
@@ -26,6 +29,7 @@ function AssignmentDetail({ assignment }: { assignment: DemoAssignment }) {
   const [projectUrl, setProjectUrl] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState(false)
+  const { trigger, shake } = useShakeTrigger()
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -43,7 +47,9 @@ function AssignmentDetail({ assignment }: { assignment: DemoAssignment }) {
       }
     }
     setErrors(nextErrors)
-    setPreview(Object.keys(nextErrors).length === 0)
+    const isValid = Object.keys(nextErrors).length === 0
+    setPreview(isValid)
+    if (!isValid) shake()
   }
 
   return (
@@ -60,12 +66,14 @@ function AssignmentDetail({ assignment }: { assignment: DemoAssignment }) {
             <SectionTitle eyebrow="LOCAL FORM PREVIEW" title="Prepare a response" />
             <p className="assignment-form-note">This form only previews your draft in this browser view. It does not submit or save work to a server.</p>
             <form className="feature-form feature-form-single" noValidate onSubmit={submit}>
-              <label className="feature-select-label">Written response
-                <textarea aria-describedby={errors.response ? 'assignment-response-error' : undefined} aria-invalid={Boolean(errors.response)} maxLength={2000} onChange={(event) => { setResponse(event.target.value); setPreview(false) }} placeholder="Describe your approach, decisions, or reflection (at least 30 characters)." rows={6} value={response} />
-                <span className={errors.response ? 'feature-field-error' : 'feature-field-hint'} id={errors.response ? 'assignment-response-error' : undefined}>{errors.response ?? `${response.length}/2000`}</span>
-              </label>
-              <Input autoComplete="url" error={errors.projectUrl} helperText="Optional · use an http or https link." label="Project URL" onChange={(event) => { setProjectUrl(event.target.value); setPreview(false) }} placeholder="https://example.com/project" type="url" value={projectUrl} />
-              <Button type="submit">Preview submission</Button>
+              <Shake trigger={trigger}>
+                <label className="feature-select-label">Written response
+                  <textarea aria-describedby={errors.response ? 'assignment-response-error' : undefined} aria-invalid={Boolean(errors.response)} maxLength={2000} onChange={(event) => { setResponse(event.target.value); setPreview(false) }} placeholder="Describe your approach, decisions, or reflection (at least 30 characters)." rows={6} value={response} />
+                  <span className={errors.response ? 'feature-field-error' : 'feature-field-hint'} id={errors.response ? 'assignment-response-error' : undefined}>{errors.response ?? `${response.length}/2000`}</span>
+                </label>
+                <Input autoComplete="url" error={errors.projectUrl} helperText="Optional · use an http or https link." label="Project URL" onChange={(event) => { setProjectUrl(event.target.value); setPreview(false) }} placeholder="https://example.com/project" type="url" value={projectUrl} />
+                <Button type="submit">Preview submission</Button>
+              </Shake>
             </form>
             {preview && <div className="assignment-submission-preview"><StatusNotice title="Submission preview only">Nothing was submitted or saved. This is not a completed assignment or server confirmation.</StatusNotice>{response.trim() && <div><strong>Draft response</strong><p>{response}</p></div>}{projectUrl.trim() && <div><strong>Project URL</strong><p><a href={projectUrl} rel="noreferrer" target="_blank">{projectUrl}</a></p></div>}</div>}
           </Card>
@@ -128,7 +136,7 @@ export function AssignmentsPage() {
         </div>
       </Card>
       <div className="feature-results-heading"><SectionTitle eyebrow="SAMPLE COURSEWORK" title="Assignment previews" /><span>{filtered.length} {filtered.length === 1 ? 'assignment' : 'assignments'}</span></div>
-      {filtered.length ? <div className="assignment-grid">{filtered.map((item) => <AssignmentCard assignment={item} key={item.id} />)}</div> : <EmptyResults description="Try another search or reset your status filter." onReset={clearFilters} title="No sample assignments match" />}
+      {filtered.length ? <StaggerContainer className="assignment-grid">{filtered.map((item) => <AssignmentCard assignment={item} key={item.id} />)}</StaggerContainer> : <EmptyResults description="Try another search or reset your status filter." onReset={clearFilters} title="No sample assignments match" />}
     </FeaturePage>
   )
 }

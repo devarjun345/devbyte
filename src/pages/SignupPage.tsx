@@ -5,6 +5,7 @@ import { DevByteLogo } from '../components/brand/DevByteLogo'
 import { EcosystemVisual } from '../components/marketing/EcosystemVisual'
 import { ParallaxPanel } from '../components/marketing/ParallaxPanel'
 import { Input } from '../components/ui'
+import { MicroPress, Shake, useShakeTrigger } from '../components/ui'
 
 type AccountRole = 'student' | 'mentor'
 
@@ -62,6 +63,7 @@ export function SignupPage() {
   const [localValidationNotice, setLocalValidationNotice] = useState(false)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const reduceMotion = useReducedMotion()
+  const { trigger: shakeTrigger, shake } = useShakeTrigger()
 
   const ruleResults = useMemo(
     () => passwordRules.map((rule) => ({ ...rule, satisfied: rule.test(password) })),
@@ -112,7 +114,11 @@ export function SignupPage() {
     const isValid =
       Object.values(errors).every((message) => message.length === 0) &&
       password.length > 0
-    if (isValid) setLocalValidationNotice(true)
+    if (isValid) {
+      setLocalValidationNotice(true)
+    } else {
+      shake()
+    }
   }
 
   function markTouched(field: string) {
@@ -178,15 +184,16 @@ export function SignupPage() {
               <p>Bring your curiosity. We’ll take it one step at a time.</p>
             </div>
 
+            <Shake trigger={shakeTrigger}>
             <form className="signup-form" noValidate onSubmit={onSubmit}>
               <fieldset className="role-fieldset">
                 <legend>I’m here as a</legend>
                 <div className="role-options">
                   {(['student', 'mentor'] as const).map((option) => (
-                    <label
-                      className={`role-option ${role === option ? 'is-selected' : ''}`}
-                      key={option}
-                    >
+                    <MicroPress asChild key={option}>
+                      <label
+                        className={`role-option ${role === option ? 'is-selected' : ''}`}
+                      >
                       <input
                         checked={role === option}
                         name="role"
@@ -212,6 +219,7 @@ export function SignupPage() {
                         {role === option ? '✓' : ''}
                       </span>
                     </label>
+                    </MicroPress>
                   ))}
                 </div>
               </fieldset>
@@ -410,10 +418,12 @@ export function SignupPage() {
                 )}
               </div>
 
+              <MicroPress asChild>
               <button className="signup-submit" type="submit">
                 <span>Continue as {role}</span>
                 <span aria-hidden="true">↗</span>
               </button>
+            </MicroPress>
               <p className="signup-local-note">
                 Account creation isn’t connected yet. This form only checks
                 your details in this browser.
@@ -430,8 +440,9 @@ export function SignupPage() {
                     Check the highlighted fields to continue.
                   </p>
                 )}
-            </form>
-          </motion.div>
+</form>
+            </Shake>
+           </motion.div>
           <p className="signup-side-link">
             Already have an account? <Link to="/login">Log in</Link>
           </p>

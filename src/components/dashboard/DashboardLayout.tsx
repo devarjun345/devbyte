@@ -13,6 +13,7 @@ import {
 } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { DevByteLogo } from '../brand/DevByteLogo'
+import { PageTransition } from '../layout/PageTransition'
 
 type NavigationIcon =
   | 'dashboard'
@@ -603,7 +604,9 @@ export function DashboardLayout() {
           title={title}
         />
         <main className="dashboard-content">
-          <Outlet />
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
         </main>
       </div>
 

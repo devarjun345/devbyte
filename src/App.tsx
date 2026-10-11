@@ -5,6 +5,7 @@ import { Badge, Card, LoadingIndicator, PageHeading } from './components/ui'
 import { PageContainer } from './components/layout/PageContainer'
 import { DevByteLogo } from './components/brand/DevByteLogo'
 import { DashboardLayout } from './components/dashboard/DashboardLayout'
+import { Reveal } from './components/marketing/Reveal'
 
 const DashboardPage = lazy(() =>
   import('./pages/DashboardPage').then((module) => ({
@@ -110,17 +111,21 @@ function PublicLayout({ children }: { children: ReactNode }) {
 function LoginPlaceholder() {
   return (
     <div className="mx-auto max-w-xl">
-      <PageHeading
-        description="Authentication is not connected. This page is a route placeholder only."
-        eyebrow="Authentication not implemented"
-        title="Login"
-      />
-      <Card className="mt-8">
-        <Badge variant="warning">Authentication not implemented</Badge>
-        <p className="mt-4 text-sm leading-6 text-secondary-text">
-          No login form or simulated sign-in is available in this phase.
-        </p>
-      </Card>
+      <Reveal>
+        <PageHeading
+          description="Authentication is not connected. This page is a route placeholder only."
+          eyebrow="Authentication not implemented"
+          title="Login"
+        />
+      </Reveal>
+      <Reveal delay={0.08}>
+        <Card className="mt-8">
+          <Badge variant="warning">Authentication not implemented</Badge>
+          <p className="mt-4 text-sm leading-6 text-secondary-text">
+            No login form or simulated sign-in is available in this phase.
+          </p>
+        </Card>
+      </Reveal>
     </div>
   )
 }
